@@ -17,7 +17,7 @@ class App():
         self.root.resizable(False, False)
         self.root.configure(fg_color='white')
         self.version = "v0.0.1"
-        self.root.title(f"AMCAIM Toolbox")
+        self.root.title(f"AMCAIM PayAuth")
         self.subapps = self.__read_subapps()
         self.blueprint = self.__read_blueprint()
         self.components = {}

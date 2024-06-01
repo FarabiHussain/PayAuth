@@ -16,8 +16,8 @@ class GUI:
         self.stringvar = StringVar(value="")
         self.component = None
 
-        # ctk.CTkLabel(master, text=label_text).place(x=left_offset + 10, y=top_offset + 10)
-        ctk.CTkLabel(master, text=label_text, anchor="w").grid(row=top_offset, column=0, pady=5, padx=5)
+        self.label = ctk.CTkLabel(master, width=190, text=label_text, anchor="w")
+        self.label.grid(row=top_offset, column=0, pady=5, padx=5, columnspan=1)
 
     def get(self) -> str:
         field = self.component
@@ -52,7 +52,8 @@ class ComboBox(GUI):
             variable=self.stringvar,
         )
 
-        self.component.place(x=left_offset + 210, y=top_offset + 8)
+        # self.component.place(x=left_offset + 210, y=top_offset + 8)
+        self.component.grid(row=top_offset, column=1, pady=5, padx=5, columnspan=3)
 
     def get(self) -> str:
         """returns the first option if nothing was selected"""
@@ -85,7 +86,6 @@ class Entry(GUI):
             textvariable=self.stringvar,
         )
 
-        # self.component.place(x=left_offset + 210, y=top_offset + 8)
         self.component.grid(row=top_offset, column=1, pady=5, padx=5, columnspan=3)
 
 
@@ -112,7 +112,7 @@ class DatePicker(GUI):
             values=self.populate_days(),
             variable=self.stringvar_day,
         )
-        # self.component_day.place(x=left_offset + 300, y=top_offset + 8)
+
         self.component_day.grid(row=top_offset, column=1, pady=5, padx=5)
 
         self.component_month = ctk.CTkComboBox(
@@ -127,7 +127,7 @@ class DatePicker(GUI):
             variable=self.stringvar_month,
             command=self.repopulate_days
         )
-        # self.component_month.place(x=left_offset + 210, y=top_offset + 8)
+
         self.component_month.grid(row=top_offset, column=2, pady=5, padx=5)
 
         self.component_year = ctk.CTkComboBox(
@@ -142,7 +142,7 @@ class DatePicker(GUI):
             variable=self.stringvar_year,
             command=self.repopulate_days
         )
-        # self.component_year.place(x=left_offset + 380, y=top_offset + 8)
+
         self.component_year.grid(row=top_offset, column=3, pady=5, padx=5)
 
 
@@ -233,6 +233,44 @@ class DatePicker(GUI):
         self.stringvar_year.set(str(y))
 
         return self.get()
+
+
+class PaymentInfo(GUI):
+    def __init__(self, master=None, label_text="", left_offset=0, top_offset=0) -> None:
+
+        super().__init__(master, label_text, left_offset, top_offset)
+
+        self.pay_amount = Entry(master=master, label_text=label_text, left_offset=10, top_offset=top_offset)
+        self.pay_amount.component.configure(width=70)
+        self.pay_amount.stringvar.set(value="$")
+        self.pay_amount.component.grid(row=top_offset, column=1, pady=5, padx=5, columnspan=1)
+
+        self.pay_date = DatePicker(master=master, label_text=label_text, left_offset=10, top_offset=top_offset)
+        self.pay_date.component_day.grid(row=top_offset, column=2, pady=5, padx=5)
+        self.pay_date.component_month.grid(row=top_offset, column=3, pady=5, padx=5)
+        self.pay_date.component_year.grid(row=top_offset, column=4, pady=5, padx=5)
+
+        # shorten the width of the label to fit the window
+        self.label.configure(width=100, text=label_text)
+
+        # get rid of the labels that come with the Entry and DatePicker objects
+        self.pay_amount.label.destroy()
+        self.pay_date.label.destroy()
+
+
+    def reset(self) -> None:
+        self.pay_amount.reset()
+        self.pay_date.reset()
+
+
+    def get(self) -> dict[str, str]:
+        payment = {
+            "amount": self.pay_amount.get(),
+            "date": self.pay_date.get()
+        }
+
+        return payment
+
 
 
 class InfoPopup():
