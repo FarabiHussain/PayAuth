@@ -272,7 +272,6 @@ class PaymentInfo(GUI):
         return payment
 
 
-
 class InfoPopup():
     def __init__(self, msg="InfoPopup") -> None:
         CTkMessagebox(title="Info", message=f"\n{msg}\n", height=250)
@@ -324,7 +323,7 @@ class AppButton():
             fg_color="#ffffff",
         )
         
-        self.desc_frame.grid(row=row,column=1, pady=5, padx=5)
+        self.desc_frame.grid(row=row, column=1, pady=5, padx=5)
 
         bold_font = ctk.CTkFont(family="Roboto Bold", weight="bold")
         normal_font = ctk.CTkFont(family="Roboto")
@@ -344,6 +343,31 @@ class AppButton():
 
         app.unhide()
         os.chdir(owd)
+
+
+class ActionButton():
+    def __init__(self, app=None, action="", master=None, image=None, btn_text="", btn_color="transparent", width=80, height=40, row=0, col=0) -> None:
+
+        self.component = ctk.CTkButton(
+            master=master,
+            text=btn_text,
+            image=image,
+            border_width=0,
+            corner_radius=2,
+            fg_color=btn_color,
+            command=lambda: self.assign_action(app, action),
+            width=width,
+            height=height,
+        ).grid(row=row, column=col, pady=5, padx=5)
+
+
+    def assign_action(self, app, action) -> None:
+        if ("clear" == action):
+            for component in app.get_all_components().values():
+                component.reset()
+
+        elif ("docx" == action):
+            pass
 
 
 class Tabview:

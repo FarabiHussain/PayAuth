@@ -4,7 +4,7 @@ from Img import *
 from GUI import *
 from App import *
 
-imgs = Img("lg")
+imgs = Img("md")
 app = App()
 app.set_size(w=512, h=520)
 
@@ -46,7 +46,12 @@ for tab_obj, tab_name in zip(tabs.values(), tabs.keys()):
 
         offset += 1
 
-btn_frame = ctk.CTkFrame(master=app.root, fg_color="white", border_width=1, height=50, width=480)
-btn_frame.place(x=14, y=455)
+btn_frame = ctk.CTkFrame(master=app.root, fg_color="white", border_width=0, height=50, width=480)
+btn_frame.place(x=10, y=455)
+
+ActionButton(master=btn_frame, action="clear", app=app, image=imgs.get("clear.png"), btn_color="red", row=0, col=0)
+ActionButton(master=btn_frame, action="docx", app=app, image=imgs.get("docx.png"), btn_color="blue", row=0, col=1)
+ActionButton(master=btn_frame, action="folder", app=app, image=imgs.get("folder.png"), btn_color="gray", row=0, col=2)
+ActionButton(master=btn_frame, action="test", app=app, image=imgs.get("test.png"), btn_color="lightgray", row=0, col=3)
 
 app.start()

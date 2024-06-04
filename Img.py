@@ -9,7 +9,7 @@ class Img():
 
         coefficient = {
             "sm": 16,
-            "md": 32,
+            "md": 28,
             "lg": 72,
         }
 

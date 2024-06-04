@@ -82,9 +82,18 @@ class App():
         self.components[label] = obj
 
 
-    def get_component(self, label) -> GUI.Entry | GUI.DatePicker | GUI.ComboBox | None:
+    def get_component(self, label) -> GUI.Entry | GUI.DatePicker | GUI.ComboBox | GUI.DatePicker | None:
         try:
             return self.components[label]
+        except Exception as e:
+            print(e)
+
+        return None
+
+
+    def get_all_components(self) -> dict | None:
+        try:
+            return self.components
         except Exception as e:
             print(e)
 
