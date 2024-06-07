@@ -54,4 +54,49 @@ ActionButton(master=btn_frame, action="docx", app=app, image=imgs.get("docx.png"
 ActionButton(master=btn_frame, action="folder", app=app, image=imgs.get("folder.png"), btn_color="gray", row=0, col=2)
 ActionButton(master=btn_frame, action="test", app=app, image=imgs.get("test.png"), btn_color="lightgray", row=0, col=3)
 
-app.start()
+# ------------------------------------------------------------------
+
+for component in app.get_all_components().values():
+    component.reset()
+
+legal_name = names.get_full_name(gender=random.choice(['male', 'female']))
+
+app.components['address'].set("1489 Chancellor Dr")
+app.components['billing address'].set("Address, Winnipeg, MB")
+app.components['card number'].set(f"{str(random.randint(1000000000000000, 9999999999999999))}")
+app.components['card type'].set("Visa")
+app.components['cardholder name'].set(legal_name)
+app.components['city'].set("Winnipeg")
+app.components['email'].set(f"{legal_name.lower().replace(" ","")}@gmail.com")
+app.components['expiration'].set(y="2026", m="Dec", d="31")
+app.components['first name'].set(legal_name.split(" ")[0])
+app.components['last name'].set(legal_name.split(" ")[1])
+app.components['phone'].set(f"+1 {random.choice(["(431)", "(204)"])} {str(random.randint(100, 999))}-{str(random.randint(1000, 9999))}")
+app.components['postal code'].set(f"X1X Y2Y")
+app.components['province'].set(f"Manitoba")
+app.components['security code'].set(f"{str(random.randint(100, 999))}")
+
+for i in range(random.randint(1,12)):
+    app.components[f'payment {i+1}'].set("100", "2025", "Jan", i)
+
+# ------------------------------------------------------------------
+
+cardholder = {}
+comp_vals = app.get_all_components().values()
+comp_names = app.get_all_components().keys()
+
+for comp_name, comp_val in zip(comp_names, comp_vals):
+    if ("payment" in comp_name):
+        pay_amount = comp_val.get()['amount']
+        if (pay_amount != "$" and len(pay_amount) != 0):
+            cardholder[comp_name] = comp_val.get()
+    else:
+        cardholder[comp_name] = comp_val.get()
+
+doc = Document(resource_path("assets\\templates\\auth.docx"))
+
+write_auth(doc, cardholder)
+
+# ------------------------------------------------------------------
+
+# app.start()

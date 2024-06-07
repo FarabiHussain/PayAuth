@@ -1,10 +1,15 @@
 import customtkinter as ctk
 import datetime
 import os
+import random
+import names
+from Path import *
+from docx import Document
 from CTkMessagebox import CTkMessagebox
 from tkinter import StringVar
 from icecream import ic
 from subprocess import DEVNULL, STDOUT, check_call
+from writer import write_auth
 
 
 class GUI:
@@ -61,6 +66,10 @@ class ComboBox(GUI):
             return self.options[0]
         else:
             return self.component.get()
+
+    def set(self, opt) -> None:
+        self.stringvar.set(opt)
+
 
     def reset(self) -> None:
         textvar = self.component
@@ -272,6 +281,11 @@ class PaymentInfo(GUI):
         return payment
 
 
+    def set(self, amount, year, month, date) -> None:
+        self.pay_amount.set(amount)
+        self.pay_date.set(y=year, m=month, d=date)
+
+
 class InfoPopup():
     def __init__(self, msg="InfoPopup") -> None:
         CTkMessagebox(title="Info", message=f"\n{msg}\n", height=250)
@@ -367,7 +381,63 @@ class ActionButton():
                 component.reset()
 
         elif ("docx" == action):
-            pass
+            self.docx_button(app)
+
+        elif ("test" == action):
+            self.test_button(app)
+
+        elif ("folder" == action):
+            os.startfile(os.getcwd() + "\\output")
+
+
+    def docx_button(self, app):
+        # initiate the data and document
+        # try:
+        cardholder = {}
+        comp_vals = app.get_all_components().values()
+        comp_names = app.get_all_components().keys()
+
+        for comp_name, comp_val in zip(comp_names, comp_vals):
+            if ("payment" in comp_name):
+                pay_amount = comp_val.get()['amount']
+                if (pay_amount != "$" and len(pay_amount) != 0):
+                    cardholder[comp_name] = comp_val.get()
+            else:
+                cardholder[comp_name] = comp_val.get()
+
+        doc = Document(resource_path("assets\\templates\\auth.docx"))
+
+        write_auth(doc, cardholder)
+
+        # except Exception as e:
+        #     ErrorPopup(msg=f'Exception while initializing data:\n\n{str(e)}')
+        #     return False
+
+
+    def test_button(self, app):
+
+        for component in app.get_all_components().values():
+            component.reset()
+
+        legal_name = names.get_full_name(gender=random.choice(['male', 'female']))
+
+        app.components['address'].set("Address")
+        app.components['billing address'].set("Address, Winnipeg, MB")
+        app.components['card number'].set(f"{str(random.randint(1000000000000000, 9999999999999999))}")
+        app.components['card type'].set("Visa")
+        app.components['cardholder name'].set(legal_name)
+        app.components['city'].set("Winnipeg")
+        app.components['email'].set(f"{legal_name.lower().replace(" ","")}@gmail.com")
+        app.components['expiration'].set(y="2026", m="Dec", d="31")
+        app.components['first name'].set(legal_name.split(" ")[0])
+        app.components['last name'].set(legal_name.split(" ")[1])
+        app.components['phone'].set(f"+1 {random.choice(["(431)", "(204)"])} {str(random.randint(100, 999))}-{str(random.randint(1000, 9999))}")
+        app.components['postal code'].set(f"X1X Y2Y")
+        app.components['province'].set(f"Manitoba")
+        app.components['security code'].set(f"{str(random.randint(100, 999))}")
+
+        for i in range(random.randint(1,12)):
+            app.components[f'payment {i+1}'].set("100", "2025", "Jan", i)
 
 
 class Tabview:

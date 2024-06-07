@@ -5,7 +5,7 @@
         "address": {"type": "entry"},
         "city": {"type": "entry"},
         "province": {"type": "entry"},
-        "postal Code": {"type": "entry"},
+        "postal code": {"type": "entry"},
         "phone": {"type": "entry"},
         "email": {"type": "entry"}
     },
@@ -16,10 +16,7 @@
         "cardholder name": {"type": "entry"},
         "expiration": {"type": "datepicker"},
         "security code": {"type": "entry"},
-        "province": {"type": "entry"},
-        "postal code": {"type": "entry"},
-        "phone": {"type": "entry"},
-        "email": {"type": "entry"}
+        "billing address": {"type": "entry"}
     },
 
     "Installments": {
