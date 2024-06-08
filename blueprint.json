@@ -14,7 +14,7 @@
         "card type": {"type": "combo", "options": ["Visa", "MasterCard"]},
         "card number": {"type": "entry"},
         "cardholder name": {"type": "entry"},
-        "expiration": {"type": "datepicker"},
+        "expiration": {"type": "datepicker", "show_day":"false"},
         "security code": {"type": "entry"},
         "billing address": {"type": "entry"}
     },

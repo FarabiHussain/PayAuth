@@ -99,12 +99,13 @@ class Entry(GUI):
 
 
 class DatePicker(GUI):
-    def __init__(self, master=None, label_text="", left_offset=0, top_offset=0) -> None:
+    def __init__(self, master=None, label_text="", left_offset=0, top_offset=0, show_day=True) -> None:
         """create a new GUI DatePicker object"""
 
         super().__init__(master, label_text, left_offset, top_offset)
 
         self.today = datetime.datetime.now()
+        self.show_day = show_day
 
         self.stringvar_month = StringVar(value=self.today.strftime("%b"))
         self.stringvar_day = StringVar(value=self.today.strftime("%d"))
@@ -122,7 +123,12 @@ class DatePicker(GUI):
             variable=self.stringvar_day,
         )
 
-        self.component_day.grid(row=top_offset, column=1, pady=5, padx=5)
+        # in some cases, like credit card expirations, the day is not needed
+        if show_day is True:
+            self.component_day.grid(row=top_offset, column=1, pady=5, padx=5)
+        else:
+            ctk.CTkLabel(master, height=32, width=70, text="").grid(row=top_offset, column=1, pady=5, padx=5)
+
 
         self.component_month = ctk.CTkComboBox(
             master,
@@ -220,7 +226,10 @@ class DatePicker(GUI):
         d = self.stringvar_day.get()
         y = self.stringvar_year.get()
 
-        return f"{m} {d}, {y}"
+        if self.show_day is True:
+            return f"{m} {d}, {y}"
+
+        return f"{m}, {y}"
 
 
     # set the date 

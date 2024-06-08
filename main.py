@@ -36,7 +36,7 @@ for tab_obj, tab_name in zip(tabs.values(), tabs.keys()):
         if specs['type'] == "entry":
             new_component = Entry(master=master, label_text=label, left_offset=10, top_offset=offset)
         elif specs['type'] == "datepicker":
-            new_component = DatePicker(master=master, label_text=label, left_offset=10, top_offset=offset)
+            new_component = DatePicker(master=master, label_text=label, left_offset=10, top_offset=offset, show_day=specs['show_day'])
         elif specs['type'] == "paymentinfo":
             new_component = PaymentInfo(master=master, label_text=label, left_offset=10, top_offset=offset)
         elif specs['type'] == "combo":
