@@ -12,30 +12,67 @@ from dotenv import load_dotenv
 
 def write_auth(doc, data):
 
-    client_info = [
+    # client_info = [
+    #     {
+    #         "label_l": "first name",
+    #         "info_l": data["first name"],
+    #         "label_r": "last name",
+    #         "info_r": data["last name"],
+    #     },
+    #     {
+    #         "label_l": "address",
+    #         "info_l": data["address"],
+    #         "label_r": "city",
+    #         "info_r": data["city"],
+    #     },
+    #     {
+    #         "label_l": "province",
+    #         "info_l": data["province"],
+    #         "label_r": "postal code",
+    #         "info_r": data["postal code"],
+    #     },
+    #     {
+    #         "label_l": "phone",
+    #         "info_l": data["phone"],
+    #         "label_r": "email",
+    #         "info_r": data["email"],
+    #     },
+    # ]
+
+    client_info_top = [
         {
-            "label_l": "first name",
-            "info_l": data["first name"],
-            "label_r": "last name",
-            "info_r": data["last name"],
+            "label": "first name",
+            "info": data["first name"],
         },
         {
-            "label_l": "address",
-            "info_l": data["address"],
+            "label": "last name",
+            "info": data["last name"],
+        },
+        {
+            "label": "address",
+            "info": data["address"],
+        }
+    ]
+
+    
+    client_info_bottom = [
+        {
+            "label_l": "province",
+            "info_l": data["province"],
             "label_r": "city",
             "info_r": data["city"],
         },
         {
-            "label_l": "province",
-            "info_l": data["province"],
-            "label_r": "postal code",
-            "info_r": data["postal code"],
+            "label_l": "postal code",
+            "info_l": data["postal code"],
+            "label_r": "email",
+            "info_r": data["email"],
         },
         {
             "label_l": "phone",
             "info_l": data["phone"],
-            "label_r": "email",
-            "info_r": data["email"],
+            "label_r": "",
+            "info_r": "",
         },
     ]
 
@@ -77,7 +114,7 @@ def write_auth(doc, data):
             {
                 "label_l": f"payment {i+1}",
                 "info_l": curr_amount,
-                "label_r": "date",
+                "label_r": "           on date",
                 "info_r": curr_date,
             }
         )
@@ -91,11 +128,15 @@ def write_auth(doc, data):
         }
     ]
 
-    insert_4col_table(document=doc, table_heading="Client Information".upper(), table_items=client_info)
+    # insert_4col_table(document=doc, table_heading="Client Information".upper(), table_items=client_info)
+    insert_2col_table(document=doc, table_heading="Client Information".upper(), table_items=client_info_top)
+    insert_4col_table(document=doc, table_heading="".upper(), table_items=client_info_bottom)
     insert_4col_table(document=doc, table_heading="\n\nCard Information".upper(), table_items=card_info_4col)
     insert_2col_table(document=doc, table_heading="", table_items=card_info_2col)
-    insert_4col_table(document=doc, table_heading="\n\nPayment Information (not including applicable GST and PST)".upper(), table_items=payment_info)
-    insert_4col_table(document=doc, table_heading="\n\n".upper(), table_items=bottom_info)
+    # insert_4col_table(document=doc, table_heading="\n\n\n\n".upper(), table_items=bottom_info)
+
+    insert_4col_table(document=doc, table_heading="Payment Information (not including applicable GST and PST)".upper(), table_items=payment_info)
+    # insert_4col_table(document=doc, table_heading="\n\n".upper(), table_items=bottom_info)
 
     save_doc(doc, data)
 
