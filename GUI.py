@@ -369,7 +369,7 @@ class AppButton():
 
 
 class ActionButton():
-    def __init__(self, app=None, action="", master=None, image=None, btn_text="", btn_color="transparent", width=80, height=40, row=0, col=0) -> None:
+    def __init__(self, app=None, action="", master=None, image=None, btn_text="", btn_color="transparent", width=87, height=40, row=0, col=0) -> None:
 
         self.component = ctk.CTkButton(
             master=master,
@@ -472,3 +472,55 @@ class Tabview:
 
         return tabs
 
+
+class PopupView:
+    def __init__(self) -> None:
+        if (vars.search_window['popup'] is None or not vars.search_window['popup'].winfo_exists()): 
+            vars.search_window['popup'] = ctk.CTkToplevel()
+
+            w = 300
+            h = 230
+            x = (vars.screen_sizes['ws']/2) - (w/2)
+            y = (vars.screen_sizes['hs']/2) - (h/2)
+
+            ctk.CTkFrame(
+                vars.search_window['popup'], corner_radius=2, border_width=1, width=260, height=70, fg_color='white'
+            ).place(x=20, y=140)
+
+            ctk.CTkLabel(vars.search_window['popup'], text="Document ID", bg_color='#E5E5E5', font=vars.font_family).place(x=20, y=5)
+            vars.search_window['doc_id_search'] = ctk.CTkEntry(vars.search_window['popup'], width=260, border_width=1, corner_radius=2, placeholder_text="leading zeros are optional")
+            vars.search_window['doc_id_search'].place(x=20, y=30)
+
+            ctk.CTkLabel(vars.search_window['popup'], text="Client Name", bg_color='#E5E5E5', font=vars.font_family).place(x=20, y=65)
+            vars.search_window['client_name_search'] = ctk.CTkEntry(vars.search_window['popup'], width=260, border_width=1, corner_radius=2, placeholder_text="full or partial name")
+            vars.search_window['client_name_search'].place(x=20, y=90)
+
+            ctk.CTkLabel(vars.search_window['popup'], text="Documents to open", bg_color='#E5E5E5', font=vars.font_family).place(x=40, y=145)
+            vars.search_window['qty_of_docs_to_open'] = ctk.CTkLabel(vars.search_window['popup'], width=28, height=28, corner_radius=2, text="05", fg_color='#DDDDDD', font=vars.font_family)
+            vars.search_window['qty_of_docs_to_open'].place(x=80, y=170)
+
+            vars.search_window['minus_button'] = ctk.CTkButton(vars.search_window['popup'], text="-", border_width=0, corner_radius=2, fg_color="#23265e", command=lambda:change_doc_count(-1), height=28, width=30)
+            vars.search_window['minus_button'].place(x=40, y=170)
+
+            vars.search_window['plus_button'] = ctk.CTkButton(vars.search_window['popup'], text="+", border_width=0, corner_radius=2, fg_color="#23265e", command=lambda:change_doc_count(+1), height=28, width=30)
+            vars.search_window['plus_button'].place(x=120, y=170)
+
+            ctk.CTkButton(
+                vars.search_window['popup'], text="", image=vars.icons['open'], border_width=0, corner_radius=2, fg_color="#23265e", command=lambda:open_doc_by_filter(), width=72, height=42
+            ).place(x=188, y=156)
+
+            ## render the popup
+            vars.search_window['popup'].geometry('%dx%d+%d+%d' % (w, h, x, y))
+            vars.search_window['popup'].resizable(False, False)
+            vars.search_window['popup'].configure(fg_color='white')
+        
+            try:
+                vars.search_window['popup'].after(201, lambda: vars.search_window['popup'].iconbitmap("assets\\icons\\logo.ico"))
+            except Exception as e:
+                pass
+        
+            vars.search_window['popup'].title("Search Payment")
+            vars.search_window['popup'].after(202, lambda: vars.search_window['popup'].focus())
+
+        else:    
+            vars.search_window['popup'].focus()

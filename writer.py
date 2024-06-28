@@ -12,33 +12,6 @@ from dotenv import load_dotenv
 
 def write_auth(doc, data):
 
-    # client_info = [
-    #     {
-    #         "label_l": "first name",
-    #         "info_l": data["first name"],
-    #         "label_r": "last name",
-    #         "info_r": data["last name"],
-    #     },
-    #     {
-    #         "label_l": "address",
-    #         "info_l": data["address"],
-    #         "label_r": "city",
-    #         "info_r": data["city"],
-    #     },
-    #     {
-    #         "label_l": "province",
-    #         "info_l": data["province"],
-    #         "label_r": "postal code",
-    #         "info_r": data["postal code"],
-    #     },
-    #     {
-    #         "label_l": "phone",
-    #         "info_l": data["phone"],
-    #         "label_r": "email",
-    #         "info_r": data["email"],
-    #     },
-    # ]
-
     client_info_top = [
         {
             "label": "first name",
@@ -54,7 +27,6 @@ def write_auth(doc, data):
         }
     ]
 
-    
     client_info_bottom = [
         {
             "label_l": "province",
@@ -119,28 +91,14 @@ def write_auth(doc, data):
             }
         )
 
-    bottom_info = [
-        {
-            "label_l": "Signed on date",
-            "info_l": datetime.datetime.now().strftime("%b %d, %Y"),
-            "label_r": "Client signature",
-            "info_r": " ",
-        }
-    ]
-
-    # insert_4col_table(document=doc, table_heading="Client Information".upper(), table_items=client_info)
     insert_2col_table(document=doc, table_heading="Client Information".upper(), table_items=client_info_top)
     insert_4col_table(document=doc, table_heading="".upper(), table_items=client_info_bottom)
-    insert_4col_table(document=doc, table_heading="\n\nCard Information".upper(), table_items=card_info_4col)
+    insert_4col_table(document=doc, table_heading="\n\n\nCard Information".upper(), table_items=card_info_4col)
     insert_2col_table(document=doc, table_heading="", table_items=card_info_2col)
-    # insert_4col_table(document=doc, table_heading="\n\n\n\n".upper(), table_items=bottom_info)
-
-    insert_4col_table(document=doc, table_heading="Payment Information (not including applicable GST and PST)".upper(), table_items=payment_info)
-    # insert_4col_table(document=doc, table_heading="\n\n".upper(), table_items=bottom_info)
-
+    insert_4col_table(document=doc, table_heading="\n\n\n\nPayment Information (including applicable GST and PST)".upper(), table_items=payment_info)
     save_doc(doc, data)
 
-
+# https://onboardbase.com/blog/aes-encryption-decryption/
 def cfb_encrypt(plain_text):
     load_dotenv()
 
@@ -154,6 +112,9 @@ def cfb_encrypt(plain_text):
     cipher = AES.new(key_bytes, AES.MODE_CFB, iv=iv_bytes)
     cipher_text = cipher.encrypt(plain_text_bytes)
 
-    ic(re.search('(.*?)', str(cipher_text)).group())
+    ic(plain_text)
+    decrypt_cipher = AES.new(key_bytes, AES.MODE_CFB, iv=iv_bytes)
+    
+    ic(str(decrypt_cipher.decrypt(cipher_text))[2:-1])
 
-    return (re.search('(.*?)', str(cipher_text)).group())
+    return(str(cipher_text)[2:-1])

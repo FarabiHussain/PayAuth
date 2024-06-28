@@ -51,8 +51,9 @@ btn_frame.place(x=10, y=455)
 
 ActionButton(master=btn_frame, action="clear", app=app, image=imgs.get("clear.png"), btn_color="red", row=0, col=0)
 ActionButton(master=btn_frame, action="docx", app=app, image=imgs.get("docx.png"), btn_color="blue", row=0, col=1)
-ActionButton(master=btn_frame, action="folder", app=app, image=imgs.get("folder.png"), btn_color="gray", row=0, col=2)
-ActionButton(master=btn_frame, action="test", app=app, image=imgs.get("test.png"), btn_color="lightgray", row=0, col=3)
+ActionButton(master=btn_frame, action="decrypt", app=app, image=imgs.get("decrypt.png"), btn_color="orange", row=0, col=2)
+ActionButton(master=btn_frame, action="folder", app=app, image=imgs.get("folder.png"), btn_color="gray", row=0, col=3)
+ActionButton(master=btn_frame, action="test", app=app, image=imgs.get("test.png"), btn_color="lightgray", row=0, col=4)
 
 # ------------------------------------------------------------------
 
@@ -77,7 +78,7 @@ app.components['province'].set(f"Manitoba")
 app.components['security code'].set(f"{str(random.randint(100, 999))}")
 
 for i in range(random.randint(1,12)):
-    app.components[f'payment {i+1}'].set("100", "2025", "Jan", i)
+    app.components[f'payment {i+1}'].set("100", "2025", "Jan", (i+1))
 
 # ------------------------------------------------------------------
 
@@ -95,8 +96,8 @@ for comp_name, comp_val in zip(comp_names, comp_vals):
 
 doc = Document(resource_path("assets\\templates\\auth.docx"))
 
-write_auth(doc, cardholder)
+# write_auth(doc, cardholder)
 
 # ------------------------------------------------------------------
 
-# app.start()
+app.start()
