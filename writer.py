@@ -1,6 +1,7 @@
 import os
 import datetime
 import re
+import zlib
 from docx import Document
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from Path import *
@@ -9,6 +10,7 @@ from icecream import ic
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 from dotenv import load_dotenv
+from base64 import urlsafe_b64encode as b64e, urlsafe_b64decode as b64d
 
 def write_auth(doc, data):
 
@@ -64,7 +66,7 @@ def write_auth(doc, data):
         },
         {
             "label": "security code",
-            "info": cfb_encrypt(data["security code"]),
+            "info": obscure(data["security code"]),
         },
         {
             "label": "cardholder name",
@@ -98,23 +100,43 @@ def write_auth(doc, data):
     insert_4col_table(document=doc, table_heading="\n\n\n\nPayment Information (including applicable GST and PST)".upper(), table_items=payment_info)
     save_doc(doc, data)
 
-# https://onboardbase.com/blog/aes-encryption-decryption/
-def cfb_encrypt(plain_text):
-    load_dotenv()
+# ------------------------------------------------------------------------
 
-    KEY = os.getenv('KEY')
-    IV = os.getenv('IV')
+# # https://onboardbase.com/blog/aes-encryption-decryption/
+# def aes_encrypt(plain_text) -> str:
+#     load_dotenv()
 
-    plain_text_bytes = bytes(plain_text, 'utf-8')
-    key_bytes = bytes(KEY, 'utf-8')
-    iv_bytes = bytes(IV, 'utf-8')
+#     plain_text_bytes = bytes(plain_text, 'utf-8')
+#     key_bytes = bytes(os.getenv('KEY'), 'utf-8')
+#     iv_bytes = bytes(os.getenv('IV'), 'utf-8')
 
-    cipher = AES.new(key_bytes, AES.MODE_CFB, iv=iv_bytes)
-    cipher_text = cipher.encrypt(plain_text_bytes)
+#     cipher = AES.new(key_bytes, AES.MODE_CFB, iv=iv_bytes)
+#     cipher_text = cipher.encrypt(plain_text_bytes)
 
-    ic(plain_text)
-    decrypt_cipher = AES.new(key_bytes, AES.MODE_CFB, iv=iv_bytes)
-    
-    ic(str(decrypt_cipher.decrypt(cipher_text))[2:-1])
+#     ic((str(cipher_text)[2:-1]).decode())
+#     return(str(cipher_text)[2:-1])
 
-    return(str(cipher_text)[2:-1])
+# ------------------------------------------------------------------------
+
+# def aes_decrypt(cipher_text) -> str:
+#     load_dotenv()
+
+#     cipher_text_bytes = str(cipher_text)
+
+#     cipher_text_bytes = cipher_text_bytes.encode("raw_unicode_escape")
+#     ic(cipher_text_bytes)
+
+#     key_bytes = bytes(os.getenv('KEY'), 'utf-8')
+#     iv_bytes = bytes(os.getenv('IV'), 'utf-8')
+
+#     decrypt_cipher = AES.new(key_bytes, AES.MODE_CFB, iv=iv_bytes)
+
+#     return(str(decrypt_cipher.decrypt(cipher_text_bytes))[2:-1])
+
+# ------------------------------------------------------------------------
+
+def obscure(unobscured: str) -> str:
+    return b64e(zlib.compress(str.encode(unobscured), 9)).decode()
+
+def unobscure(obscured: str) -> str:
+    return zlib.decompress(b64d(str.encode(obscured))).decode()

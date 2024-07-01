@@ -9,7 +9,8 @@ from CTkMessagebox import CTkMessagebox
 from tkinter import StringVar
 from icecream import ic
 from subprocess import DEVNULL, STDOUT, check_call
-from writer import write_auth
+from writer import obscure, write_auth, unobscure
+from dotenv import load_dotenv
 
 
 class GUI:
@@ -378,7 +379,7 @@ class ActionButton():
             border_width=0,
             corner_radius=2,
             fg_color=btn_color,
-            command=lambda: self.assign_action(app, action),
+            command=lambda:self.assign_action(app, action),
             width=width,
             height=height,
         ).grid(row=row, column=col, pady=5, padx=5)
@@ -395,32 +396,94 @@ class ActionButton():
         elif ("test" == action):
             self.test_button(app)
 
+        elif ("decrypt" == action):
+            self.decrypt_button(app)
+
         elif ("folder" == action):
-            os.startfile(os.getcwd() + "\\output")
+            try:
+                os.startfile(os.getcwd() + "\\output")
+            except Exception as e:
+                ErrorPopup(msg=f'Output folder not found')
+
+
+    def decrypt_button(self, app):
+        # retrieve object from app.components
+        decrypt_tool = app.get_window("decrypt tool")
+
+        # check whether the object contains a window
+        if (decrypt_tool is not None) and (not decrypt_tool.body.winfo_exists()):
+            decrypt_tool = None
+
+        # create a new object if None was found
+        if decrypt_tool is None:
+            decrypt_tool = WindowView(ws=app.root.winfo_screenwidth(), hs=app.root.winfo_screenheight())
+            app.add_window("decrypt tool", decrypt_tool)
+
+            decrypt_tool.__password_strvar = ctk.StringVar(value="")
+            decrypt_tool.__encrypted_strvar = ctk.StringVar(value="")
+            decrypt_tool.__decrypted_strvar = ctk.StringVar(value="")
+
+            decrypt_tool.body.title("Decrypt CVV")
+
+            ctk.CTkLabel(decrypt_tool.body, text="Encrypted CVV", bg_color='transparent').place(x=20, y=5)
+            decrypt_tool.doc_id_search = ctk.CTkEntry(decrypt_tool.body, width=260, border_width=1, corner_radius=2, textvariable=decrypt_tool.__encrypted_strvar)
+            decrypt_tool.doc_id_search.place(x=20, y=28)
+
+            ctk.CTkLabel(decrypt_tool.body, text="Password", bg_color='transparent').place(x=20, y=70)
+            decrypt_tool.client_name_search = ctk.CTkEntry(decrypt_tool.body, width=260, border_width=1, corner_radius=2, textvariable=decrypt_tool.__password_strvar, show="*")
+            decrypt_tool.client_name_search.place(x=20, y=93)
+
+            ctk.CTkLabel(decrypt_tool.body, text="Decrypted CVV", bg_color='transparent').place(x=20, y=135)
+            decrypt_tool.client_name_search = ctk.CTkEntry(decrypt_tool.body, width=260, border_width=1, corner_radius=2, textvariable=decrypt_tool.__decrypted_strvar)
+            decrypt_tool.client_name_search.place(x=20, y=158)
+
+            ctk.CTkButton(decrypt_tool.body, text="Run", border_width=0, corner_radius=2, fg_color="#23265e", command=lambda:self.run_decryptor(decrypt_tool), width=72, height=36).place(x=20, y=205)
+
+            decrypt_tool.body.after(202, lambda: decrypt_tool.body.focus())
+
+        # bring the window forward if found
+        else:
+            decrypt_tool.focus()
+
+
+    def run_decryptor(self, decrypt_tool) -> str:
+        load_dotenv()
+
+        cipher_text=decrypt_tool.__encrypted_strvar.get()
+        input_password=decrypt_tool.__password_strvar.get()
+        input_password="viewp0rt"
+
+        if os.getenv('PW') == obscure(input_password):
+            plain_text = unobscure(cipher_text)
+            ic(plain_text)
+            decrypt_tool.__decrypted_strvar.set(plain_text)
+        else:
+            ErrorPopup(msg=f'Wrong password')
+            ic(input_password, os.getenv('PW'))
 
 
     def docx_button(self, app):
         # initiate the data and document
-        # try:
-        cardholder = {}
-        comp_vals = app.get_all_components().values()
-        comp_names = app.get_all_components().keys()
+        try:
+            cardholder = {}
+            comp_vals = app.get_all_components().values()
+            comp_names = app.get_all_components().keys()
 
-        for comp_name, comp_val in zip(comp_names, comp_vals):
-            if ("payment" in comp_name):
-                pay_amount = comp_val.get()['amount']
-                if (pay_amount != "$" and len(pay_amount) != 0):
+            for comp_name, comp_val in zip(comp_names, comp_vals):
+                if ("payment" in comp_name):
+                    pay_amount = comp_val.get()['amount']
+                    if (pay_amount != "$" and len(pay_amount) != 0):
+                        cardholder[comp_name] = comp_val.get()
+                else:
                     cardholder[comp_name] = comp_val.get()
-            else:
-                cardholder[comp_name] = comp_val.get()
 
-        doc = Document(resource_path("assets\\templates\\auth.docx"))
+            doc = Document(resource_path("assets\\templates\\auth.docx"))
 
-        write_auth(doc, cardholder)
+            write_auth(doc, cardholder)
 
-        # except Exception as e:
-        #     ErrorPopup(msg=f'Exception while initializing data:\n\n{str(e)}')
-        #     return False
+        except Exception as e:
+            ErrorPopup(msg=f'Exception while initializing data:\n\n{str(e)}')
+            return False
 
 
     def test_button(self, app):
@@ -473,54 +536,19 @@ class Tabview:
         return tabs
 
 
-class PopupView:
-    def __init__(self) -> None:
-        if (vars.search_window['popup'] is None or not vars.search_window['popup'].winfo_exists()): 
-            vars.search_window['popup'] = ctk.CTkToplevel()
+class WindowView:
+    def __init__(self, ws, hs) -> None:
+        self.body = ctk.CTkToplevel()
 
-            w = 300
-            h = 230
-            x = (vars.screen_sizes['ws']/2) - (w/2)
-            y = (vars.screen_sizes['hs']/2) - (h/2)
+        w = 300
+        h = 260
+        x = (ws/2) - (w/2)
+        y = (hs/2) - (h/2)
 
-            ctk.CTkFrame(
-                vars.search_window['popup'], corner_radius=2, border_width=1, width=260, height=70, fg_color='white'
-            ).place(x=20, y=140)
+        self.body.geometry('%dx%d+%d+%d' % (w, h, x, y))
+        self.body.resizable(False, False)
+        self.body.configure(fg_color='white')
 
-            ctk.CTkLabel(vars.search_window['popup'], text="Document ID", bg_color='#E5E5E5', font=vars.font_family).place(x=20, y=5)
-            vars.search_window['doc_id_search'] = ctk.CTkEntry(vars.search_window['popup'], width=260, border_width=1, corner_radius=2, placeholder_text="leading zeros are optional")
-            vars.search_window['doc_id_search'].place(x=20, y=30)
+    def focus(self) -> None:
+        self.body.focus()
 
-            ctk.CTkLabel(vars.search_window['popup'], text="Client Name", bg_color='#E5E5E5', font=vars.font_family).place(x=20, y=65)
-            vars.search_window['client_name_search'] = ctk.CTkEntry(vars.search_window['popup'], width=260, border_width=1, corner_radius=2, placeholder_text="full or partial name")
-            vars.search_window['client_name_search'].place(x=20, y=90)
-
-            ctk.CTkLabel(vars.search_window['popup'], text="Documents to open", bg_color='#E5E5E5', font=vars.font_family).place(x=40, y=145)
-            vars.search_window['qty_of_docs_to_open'] = ctk.CTkLabel(vars.search_window['popup'], width=28, height=28, corner_radius=2, text="05", fg_color='#DDDDDD', font=vars.font_family)
-            vars.search_window['qty_of_docs_to_open'].place(x=80, y=170)
-
-            vars.search_window['minus_button'] = ctk.CTkButton(vars.search_window['popup'], text="-", border_width=0, corner_radius=2, fg_color="#23265e", command=lambda:change_doc_count(-1), height=28, width=30)
-            vars.search_window['minus_button'].place(x=40, y=170)
-
-            vars.search_window['plus_button'] = ctk.CTkButton(vars.search_window['popup'], text="+", border_width=0, corner_radius=2, fg_color="#23265e", command=lambda:change_doc_count(+1), height=28, width=30)
-            vars.search_window['plus_button'].place(x=120, y=170)
-
-            ctk.CTkButton(
-                vars.search_window['popup'], text="", image=vars.icons['open'], border_width=0, corner_radius=2, fg_color="#23265e", command=lambda:open_doc_by_filter(), width=72, height=42
-            ).place(x=188, y=156)
-
-            ## render the popup
-            vars.search_window['popup'].geometry('%dx%d+%d+%d' % (w, h, x, y))
-            vars.search_window['popup'].resizable(False, False)
-            vars.search_window['popup'].configure(fg_color='white')
-        
-            try:
-                vars.search_window['popup'].after(201, lambda: vars.search_window['popup'].iconbitmap("assets\\icons\\logo.ico"))
-            except Exception as e:
-                pass
-        
-            vars.search_window['popup'].title("Search Payment")
-            vars.search_window['popup'].after(202, lambda: vars.search_window['popup'].focus())
-
-        else:    
-            vars.search_window['popup'].focus()

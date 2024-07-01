@@ -96,8 +96,6 @@ for comp_name, comp_val in zip(comp_names, comp_vals):
 
 doc = Document(resource_path("assets\\templates\\auth.docx"))
 
-# write_auth(doc, cardholder)
-
 # ------------------------------------------------------------------
 
 app.start()

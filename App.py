@@ -21,6 +21,7 @@ class App():
         self.subapps = self.__read_subapps()
         self.blueprint = self.__read_blueprint()
         self.components = {}
+        self.windows = {}
 
         try:
             self.root.iconbitmap(f"{os.getcwd()}\\assets\\icons\\app.ico")
@@ -82,9 +83,22 @@ class App():
         self.components[label] = obj
 
 
-    def get_component(self, label) -> GUI.Entry | GUI.DatePicker | GUI.ComboBox | GUI.DatePicker | None:
+    def get_component(self, label) -> GUI.Entry | GUI.DatePicker | GUI.ComboBox | GUI.DatePicker | GUI.WindowView | None:
         try:
             return self.components[label]
+        except Exception as e:
+            print(e)
+
+        return None
+
+
+    def add_window(self, label, obj) -> None:
+        self.windows[label] = obj
+
+
+    def get_window(self, label) -> GUI.WindowView | None:
+        try:
+            return self.windows[label]
         except Exception as e:
             print(e)
 
