@@ -16,7 +16,7 @@ class App():
         self.root = ctk.CTk()
         self.root.resizable(False, False)
         self.root.configure(fg_color='white')
-        self.version = "v1.0.0"
+        self.version = "v1.0.1"
         self.root.title(f"AMCAIM PayAuth {self.version}")
         self.subapps = self.__read_subapps()
         self.blueprint = self.__read_blueprint()

@@ -25,20 +25,32 @@ def import_recent(app=None) -> bool:
     last_row = get_recent()
 
     client1_name = last_row['client_name'].split(';')[0]
-    client2_name = last_row['client_name'].split(';')[1]
-    first_names = f"{(" ").join(client1_name.split(' ')[0:-1])} ({(" ").join(client2_name.split(' ')[0:-1])})"
-    last_names = f"{client1_name.split(' ')[-1]} ({client2_name.split(' ')[-1]})"
-
     client1_email = last_row['email'].split(';')[0]
-    client2_email = last_row['email'].split(';')[1]
-
     client1_phone = last_row['phone'].split(';')[0].replace("'", "")
-    client2_phone = last_row['phone'].split(';')[1].replace("'", "")
+
+    try:
+        client2_name = {last_row['client_name'].split(';')[1]}
+        client2_name = f" ({(" ").join(client2_name.split(' ')[0:-1])})"
+        first_names = f"{(" ").join(client1_name.split(' ')[0:-1])}{client2_name}"
+        last_names = f"{client1_name.split(' ')[-1]} ({client2_name.split(' ')[-1]})"
+    except Exception as e:
+        first_names = f"{(" ").join(client1_name.split(' ')[0:-1])}"
+        last_names = f"{client1_name.split(' ')[-1]}"
+
+    try:
+        client2_email = f" ({last_row['email'].split(';')[1]})"
+    except Exception as e:
+        client2_email = ""
+
+    try:
+        client2_phone = f" ({last_row['phone'].split(';')[1].replace("'", "")})"
+    except Exception as e:
+        client2_phone = ""
 
     app.components['first name'].set(first_names)
     app.components['last name'].set(last_names)
-    app.components['email'].set(f"{client1_email} ({client2_email})")
-    app.components['phone'].set(f"{client1_phone} ({client2_phone})")
+    app.components['email'].set(f"{client1_email}{client2_email}")
+    app.components['phone'].set(f"{client1_phone}{client2_phone}")
     app.components['city'].set("Winnipeg")
     app.components['province'].set(f"Manitoba")
 
