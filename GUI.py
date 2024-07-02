@@ -386,11 +386,11 @@ class ActionButton():
 
 
     def assign_action(self, app, action) -> None:
-        if ("clear" == action):
+        if ("reset" == action):
             for component in app.get_all_components().values():
                 component.reset()
 
-        elif ("docx" == action):
+        elif ("create" == action):
             self.docx_button(app)
 
         elif ("test" == action):
@@ -399,7 +399,7 @@ class ActionButton():
         elif ("decrypt" == action):
             self.decrypt_button(app)
 
-        elif ("folder" == action):
+        elif ("output" == action):
             try:
                 os.startfile(os.getcwd() + "\\output")
             except Exception as e:
