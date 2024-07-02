@@ -50,10 +50,10 @@ for tab_obj, tab_name in zip(tabs.values(), tabs.keys()):
 btn_frame = ctk.CTkFrame(master=app.root, fg_color="white", border_width=0, height=50, width=480)
 btn_frame.place(x=10, y=455)
 
-ActionButton(master=btn_frame, action="clear", app=app, image=imgs.get("clear.png"), btn_color="red", row=0, col=0)
-ActionButton(master=btn_frame, action="docx", app=app, image=imgs.get("docx.png"), btn_color="blue", row=0, col=1)
+ActionButton(master=btn_frame, action="reset", app=app, image=imgs.get("reset.png"), btn_color="red", row=0, col=0)
+ActionButton(master=btn_frame, action="create", app=app, image=imgs.get("create.png"), btn_color="blue", row=0, col=1)
 ActionButton(master=btn_frame, action="decrypt", app=app, image=imgs.get("decrypt.png"), btn_color="orange", row=0, col=2)
-ActionButton(master=btn_frame, action="folder", app=app, image=imgs.get("folder.png"), btn_color="gray", row=0, col=3)
+ActionButton(master=btn_frame, action="output", app=app, image=imgs.get("output.png"), btn_color="gray", row=0, col=3)
 ActionButton(master=btn_frame, action="test", app=app, image=imgs.get("test.png"), btn_color="lightgray", row=0, col=4)
 
 cardholder = {}
