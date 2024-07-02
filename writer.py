@@ -24,6 +24,14 @@ def write_auth(doc, data):
             "info": data["last name"],
         },
         {
+            "label": "email",
+            "info": data["email"],
+        },
+        {
+            "label": "phone",
+            "info": data["phone"],
+        },
+        {
             "label": "address",
             "info": data["address"],
         }
@@ -39,12 +47,6 @@ def write_auth(doc, data):
         {
             "label_l": "postal code",
             "info_l": data["postal code"],
-            "label_r": "email",
-            "info_r": data["email"],
-        },
-        {
-            "label_l": "phone",
-            "info_l": data["phone"],
             "label_r": "",
             "info_r": "",
         },

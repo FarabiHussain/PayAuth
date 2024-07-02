@@ -1,4 +1,4 @@
-import datetime, os
+import datetime, os, re
 from docx.oxml import OxmlElement
 from docx.oxml.ns import qn
 from docx.text.paragraph import Paragraph
@@ -114,7 +114,7 @@ def save_doc(doc, data):
         if not os.path.exists(output_dir):
             os.makedirs(output_dir)
 
-        output_filename = f"[{(datetime.datetime.now().timestamp())}] - {data['first name']} {data['last name']}.docx"
+        output_filename = f"Payment Authorization - {re.sub(r' \((.*?)\)', '', data['first name']).strip()} {re.sub(r' \((.*?)\)', '', data['last name']).strip()}.docx"
 
         # save the file to the output folder
         doc.save(output_dir + output_filename)

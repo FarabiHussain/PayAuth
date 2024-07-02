@@ -455,11 +455,9 @@ class ActionButton():
 
         if os.getenv('PW') == obscure(input_password):
             plain_text = unobscure(cipher_text)
-            ic(plain_text)
             decrypt_tool.__decrypted_strvar.set(plain_text)
         else:
             ErrorPopup(msg=f'Wrong password')
-            ic(input_password, os.getenv('PW'))
 
 
     def docx_button(self, app):
