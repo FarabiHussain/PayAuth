@@ -451,7 +451,7 @@ class ActionButton():
 
         cipher_text=decrypt_tool.__encrypted_strvar.get()
         input_password=decrypt_tool.__password_strvar.get()
-        input_password="viewp0rt"
+        # input_password="viewp0rt"
 
         if os.getenv('PW') == obscure(input_password):
             plain_text = unobscure(cipher_text)
