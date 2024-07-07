@@ -24,6 +24,8 @@ def import_recent(app=None) -> bool:
 
     last_row = get_recent()
 
+    add_taxes = True if last_row['add_taxes'] == 'TRUE' else False
+    ic(last_row['add_taxes'] == 'TRUE')
     client1_name = last_row['client_name'].split(';')[0]
     client1_email = last_row['email'].split(';')[0]
     client1_phone = last_row['phone'].split(';')[0].replace("'", "")
@@ -59,6 +61,10 @@ def import_recent(app=None) -> bool:
         # ensure both fields are filled out, otherwise leave blank
         if len(last_row[f"date_{i}"]) > 0 and len(last_row[f"amount_{i}"]) > 0:
             curr_amount = last_row[f"amount_{i}"]
+
+            if add_taxes is True:
+                curr_amount = ("{:.2f}".format(float(curr_amount) * 1.12)) 
+
             curr_day = last_row[f"date_{i}"].split("/")[0]
             curr_month = last_row[f"date_{i}"].split("/")[1]
             curr_year = last_row[f"date_{i}"].split("/")[2]
