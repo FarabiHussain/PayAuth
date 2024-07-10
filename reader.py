@@ -24,7 +24,7 @@ def import_recent(app=None) -> bool:
 
     last_row = get_recent()
 
-    add_taxes = True if last_row['add_taxes'] == 'TRUE' else False
+    add_taxes = True if last_row['add_taxes'].lower() == 'true' else False
     ic(last_row['add_taxes'] == 'TRUE')
     client1_name = last_row['client_name'].split(';')[0]
     client1_email = last_row['email'].split(';')[0]
